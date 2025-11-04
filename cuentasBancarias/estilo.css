@@ -1,0 +1,38 @@
+#contenedor-barra {
+  width: 100%;
+  border: 5px solid #2C405B;
+  border-radius: 25px;
+  margin-bottom: 10px;
+}
+
+#barra-progreso {
+  height: 20px;
+  background-color: #2C405B;
+  border-radius: 10px;
+  transition: width 0.5s ease-in-out;
+}
+
+#porcentaje {
+  text-align: right;
+  font-size: 14px;
+  color: #333;
+}
+
+#lista-opciones{
+    cursor: pointer;
+}
+
+li:hover{
+    color: #8C6A3F;
+}
+
+li.selected{
+    color: #8C6A3F;
+}
+
+body{
+    background-color: #E5E5E5;
+    margin: 20px;
+    padding: 0;
+    box-sizing: border-box;
+}
