@@ -77,72 +77,58 @@ var preguntasN1 = [
 
 ];
 
+//variables
+let preguntasSeleccionadas = [];
+let indexPregunta = 0;
+let puntaje = 0;
+let respuestasCorrectas = 0;
+let opcionSeleccionada = null;
+
 //funcion para pasar de la portada a lo teorico
 function iniciarModulo(){
-    document.getElementById("portada").style.display = "block";
-    document.getElementById("teoria").style.display = "none";
-
-    setTimeout(() =>{
-        document.getElementById("portada").style.display = "block";
-        document.getElementById("teoria").style.display = "none";
-        mostrarTeoriaN1();
-    }, 2500);
+    document.getElementById("portada").style.display = "none";
+    document.getElementById("teoria").style.display = "block";
+    mostrarTeoriaN1();
 }
+
 
 //funcion para mostrar la teoria del N1
 function mostrarTeoriaN1(){
     const contenedor = document.getElementById("contenido-teorico");
+    contenedor.innerHTML = ""; //para borrrar si ya se mostro antes
+
+    teoriaN1.forEach((frase) => {
+        const p = document.createElement("p");
+        p.textContent = frase;
+        contenedor.appendChild(p);
+    });
 }
 
-let respuestasUsuario = []; //para guardar lo que selecciono el usuario
+//funcion para iniciar las preguntas
+function iniciarPreguntas(){
+    document.getElementById("teoria").style.display = "none";
+    document.getElementById("preguntas").style.display = "block";
 
-//puntos por respuesta correcta
-let puntaje = 0;
+    preguntasSeleccionadas = seleccionarAleatorias(preguntasN1, 8);
 
-let respuestasCorrectas = 0;
+    mostrarPregunta();
+}
 
-//Funcion para verificar la respuesta
-function verificarRespuesta(indexPregunta, opcionSelec){
-    const pregunta = preguntas[indexPregunta];
-
-    respuestasUsuario[indexPregunta] = opcionSelec;
-
-    if(opcionSelec === pregunta.correcta){
-        puntaje += 10;
-        respuestasCorrectas++;
-        mostrarRetroalimentacion("¡Correcto! +10 puntos", true);
-    } else{
-        mostrarRetroalimentacion("Incorrecto. La respuesta correcta era: "+ co, false)
+//funcion para seleccionar de manera aleatoria entre las preguntas que tenemos 
+function seleccionarAleatorias(lista, cantidad){
+    const copia = [...lista];
+    const seleccionadas = [];
+    
+    while (seleccionadas.length < cantidad && copia.length > 0){
+        const index = Math.floor(Math.random() * copia.length);
+        seleccionadas.push(copia.splice(index, 1)[0]);
     }
-    actualizarPuntaje();
-    actualizarBarraProgreso();
-
-    return pregunta.correcta === opcionSelec;
+    return seleccionadas
 }
-
-//funciones para la barra de progreso
-function actualizarPuntaje(){
-    document.getElementById("puntaje").textContent = "Puntaje: " + puntaje;
-}
-
-function actualizarBarraProgreso(){
-    const totalPreguntas = preguntas.length;
-    const porcentaje = Math.round((respuestasCorrectas / totalPreguntas)* 100);
-    document.getElementById("barra-progreso").style.width = porcentaje + "%";
-    document.getElementById("porcentaje").textContent = porcentaje + "%";
-}
-
-//funcion para mostrar la retroalimentacion
-function mostrarRetroalimentacion(mensaje, esCorrecto){
-    const cartel = document.getElementById("retro");
-    cartel.textContent = mensaje;
-    cartel.style.color = esCorrecto ? "green" : "red";
-}
-
 
 //necesitamos una funcion que se encargue de mostrar la pregunta
-function mostrarPregunta(indexPregunta){
-    const pregunta = preguntas[indexPregunta];
+function mostrarPregunta(){
+    const pregunta = preguntasSeleccionadas[indexPregunta];
     document.getElementById("pregunta").textContent = pregunta.texto;
 
     const listaOpciones = document.getElementById("lista-opciones");
@@ -152,29 +138,56 @@ function mostrarPregunta(indexPregunta){
         const li = document.createElement("li");
         li.textContent = opcion;
         li.onclick = () => {
-            respuestasUsuario[indexPregunta] = i;
-            mostrarCartelGanador();
-        };
-        listaOpciones.appendChild(li);
-    });
-        
+      opcionSeleccionada = i;
+      verificar();
+    };
+    listaOpciones.appendChild(li);
+  });
 }
 
-function checarSiGano(){
-    for(var i = 0; i < preguntas.length; i++){
-        if(respuestasUsuario[i] !== preguntas[i].correcta){
-            return false;
-        }
+//Funcion para verificar la respuesta
+function verificar() {
+    const pregunta = preguntasSeleccionadas[indexPregunta];
+
+    if(opcionSelec === pregunta.correcta){
+        puntaje += 10;
+        respuestasCorrectas++;
+        mostrarRetroalimentacion("¡Correcto! +10 puntos", true);
+    } else{
+        mostrarRetroalimentacion("Incorrecto. La respuesta correcta era: " + pregunta.opciones[pregunta.correcta], false);
     }
-    return true;
+    actualizarPuntaje();
+    actualizarBarraProgreso();
+
+    indexPregunta++;
+  setTimeout(() => {
+    if(indexPregunta < preguntasSeleccionadas.length){
+      mostrarPregunta();
+    } else {
+      alert("🎉 Nivel completado. Puntaje final: " + puntaje);
+    }
+  }, 1200);
 }
 
-//mostrar en html si se gano
-function mostrarCartelGanador(){
-    if(checarSiGano()){
-        alert("Felicidades, ganaste el juego");
-    }
+//funcion para mostrar la retroalimentacion
+function mostrarRetroalimentacion(mensaje, esCorrecto){
+    const cartel = document.getElementById("retro");
+    cartel.textContent = mensaje;
+    cartel.style.color = esCorrecto ? "green" : "red";
 }
+
+//funciones para la barra de progreso
+function actualizarPuntaje(){
+    document.getElementById("puntaje").textContent = "Puntaje: " + puntaje;
+}
+
+function actualizarBarraProgreso(){
+    const totalPreguntas = preguntasSeleccionadas.length;
+    const porcentaje = Math.round((respuestasCorrectas / totalPreguntas)* 100);
+    document.getElementById("barra-progreso").style.width = porcentaje + "%";
+    document.getElementById("porcentaje").textContent = porcentaje + "%";
+}
+
 
 
 

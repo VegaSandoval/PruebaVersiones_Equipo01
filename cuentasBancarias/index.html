@@ -4,37 +4,38 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cuentas Bancarias</title>
-    <link rel="stylesheet" href="../css/style.css">
+    <link rel="stylesheet" href="./estilo.css">
 </head>
 <body>
     <div id="modulo-cuentas">
         <div id="portada">
             <h1>Cuentas Bancarias</h1>
+            <p>Aprende qué son, cómo funcionan y cómo abrir tu primera cuenta de ahorro.</p>
+            <button onclick="iniciarModulo()">Comenzar módulo</button>
         </div>
-    </div>
-
-    <div id="teoria" style="display: none;">
-        <div id="contenido-teorico">
-        </div>
-        <button onclick="iniciarPreguntas()">Ir a preguntas</button>
-    </div>
+        <div id="teoria" style="display: none;">
+                <div id="contenido-teorico">
+                </div>
+                <button onclick="iniciarPreguntas()">Ir a preguntas</button>
+            </div>
 
 
-    <div id="contenedor-barra">
-        <div id="barra-progreso">
-        </div>
-    </div>
+            <div id="contenedor-barra">
+                <div id="barra-progreso">
+                </div>
+            </div>
 
 
-    <div id="preguntas" style="display: none;">
-        <ul id="pregunta"></ul>
+            <div id="preguntas" style="display: none;">
+                <h3 id="pregunta"></h3>
+            </div>
+            <div id="opciones">
+                <ul id="lista-opciones"></ul>
+            </div>
+            <div id="checkButton" onclick="verificar()">Comprobar</div>
     </div>
-    <div id="opciones">
-        <ul id="lista-opciones"></ul>
-    </div>
-    <div id="checkButton" onclick="verificarRespuesta()">
-        Comprobar
-    </div>
+
+    
     
 </body>
 <script src="./cuentasBancarias.js"></script>
