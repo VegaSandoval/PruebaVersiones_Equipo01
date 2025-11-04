@@ -23,6 +23,7 @@
 
             <div id="contenedor-barra">
                 <div id="barra-progreso"></div>
+                <p id="porcentaje">0%</p>
             </div>
 
 
@@ -31,8 +32,9 @@
             
                 <ul id="lista-opciones"></ul>
                 <div id="retro"></div>
-                <button id="btn-verificar" disabled onclick="verificar()">Comprobar</button>
-                <button id="btn-siguiente" style="display:none;">Siguiente</button>
+                <p id="puntaje"></p>
+                <button id="btn-verificar" onclick="verificar()">Comprobar</button>
+                <button id="btn-siguiente" onclick="mostrarPregunta()" style="display:none;">Siguiente</button>
             </div>
     </div>
     
