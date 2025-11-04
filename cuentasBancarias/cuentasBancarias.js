@@ -138,7 +138,8 @@ function seleccionarAleatorias(lista, cantidad){
 function mostrarPregunta(){
     bloqueado = false;
     opcionSeleccionada = null;
-    document.getElementById("btn-verificar").style.display = "ninline-block";
+    document.getElementById("btn-verificar").style.display = "inline-block";
+    document.getElementById("btn-verificar").disabled = true;
     document.getElementById("btn-siguiente").style.display = "none";
     retro.textContent = '';
 
@@ -166,11 +167,14 @@ function mostrarPregunta(){
 //necesitamos una funcion para seleccionar la opcion que queraos
 function elegirOpcion(i,liElem){
     if(bloqueado)return;
-    //se muestra como seleccionada la que elegimos
-    [...listaOpciones.children].forEach(li => li.classList.remove('selected'));
-    liElem.classList.add('selected');
-    opcionSeleccionada = i;
-    document.getElementById('btn-verificar') = false;
+
+    //para que se pueda ver que opcion se selecciono
+    [...document.getElementById("lista-opciones").children].forEach(li => li.classList.remove("selected"));
+    liElem.classList.add("selected");
+
+    opcionSeleccionada=i;
+
+    document.getElementById("btn-verificar").disabled = false;  
 }
 
 //Funcion para verificar la respuesta
@@ -190,7 +194,7 @@ function verificar() {
         if(i === opcionSeleccionada && opcionSeleccionada !== pregunta.correcta) li.classList.add('wrong');
     });
 
-    if(opcionSelec === pregunta.correcta){
+    if(opcionSeleccionada === pregunta.correcta){
         puntaje += 10;
         respuestasCorrectas++;
         mostrarRetroalimentacion("¡Correcto! +10 puntos", true);
