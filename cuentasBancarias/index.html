@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cuentas Bancarias</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div id="modulo-cuentas">
+        <div id="portada">
+            <h1>Cuentas Bancarias</h1>
+        </div>
+    </div>
+
+    <div id="teoria" style="display: none;">
+        <div id="contenido-teorico">
+        </div>
+        <button onclick="iniciarPreguntas()">Ir a preguntas</button>
+    </div>
+
+
+    <div id="contenedor-barra">
+        <div id="barra-progreso">
+        </div>
+    </div>
+
+
+    <div id="preguntas" style="display: none;">
+        <ul id="pregunta"></ul>
+    </div>
+    <div id="opciones">
+        <ul id="lista-opciones"></ul>
+    </div>
+    <div id="checkButton" onclick="verificarRespuesta()">
+        Comprobar
+    </div>
+    
+</body>
+<script src="./cuentasBancarias.js"></script>
+</html>
