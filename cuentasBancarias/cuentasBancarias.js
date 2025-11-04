@@ -180,11 +180,14 @@ function elegirOpcion(i,liElem){
 //Funcion para verificar la respuesta
 function verificar() {
     if(bloqueado)return;
-    const pregunta = preguntasSeleccionadas[indexPregunta];
     if(opcionSeleccionada === null) return; // no seleccionar
 
-    bloqueado = true; // bloquear hasta siguiente
+    const pregunta = preguntasSeleccionadas[indexPregunta];
+    if(!pregunta)return;
+    
+    const listaOpciones = document.getElementById("lista-opciones");
     const liElems = [...listaOpciones.children];
+    bloqueado = true; // bloquear hasta siguiente
 
     // marcar correcto y, si aplica, incorrecto
     liElems.forEach((li, i) => {
