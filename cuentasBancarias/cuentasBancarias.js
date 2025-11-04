@@ -83,6 +83,7 @@ let indexPregunta = 0;
 let puntaje = 0;
 let respuestasCorrectas = 0;
 let opcionSeleccionada = null;
+let bloqueado = false; // evita doble respuestas
 
 //funcion para pasar de la portada a lo teorico
 function iniciarModulo(){
@@ -108,9 +109,16 @@ function mostrarTeoriaN1(){
 function iniciarPreguntas(){
     document.getElementById("teoria").style.display = "none";
     document.getElementById("preguntas").style.display = "block";
+    document.getElementById("contenedor-barra").style.display = "block";
 
     preguntasSeleccionadas = seleccionarAleatorias(preguntasN1, 8);
+    indexPregunta = 0;
+    puntaje = 0;
+    respuestasCorrectas = 0;
+    opcionSeleccionada = null;
 
+    actualizarPuntaje();
+    actualizarBarraProgreso();
     mostrarPregunta();
 }
 
@@ -128,6 +136,13 @@ function seleccionarAleatorias(lista, cantidad){
 
 //necesitamos una funcion que se encargue de mostrar la pregunta
 function mostrarPregunta(){
+    bloqueado = false;
+    opcionSeleccionada = null;
+    document.getElementById("btn-verificar").style.display = "ninline-block";
+    document.getElementById("btn-siguiente").style.display = "none";
+    retro.textContent = '';
+
+
     const pregunta = preguntasSeleccionadas[indexPregunta];
     document.getElementById("pregunta").textContent = pregunta.texto;
 
@@ -136,18 +151,44 @@ function mostrarPregunta(){
 
     pregunta.opciones.forEach((opcion,i) => {
         const li = document.createElement("li");
+        li.tabIndex = 0;
         li.textContent = opcion;
-        li.onclick = () => {
-      opcionSeleccionada = i;
-      verificar();
-    };
-    listaOpciones.appendChild(li);
-  });
+        li.dataset.index = i;
+        li.className = "opcion";
+        li.addEventListener('click', () => elegirOpcion(i, li));
+        li.addEventListener('keydown', (e) => {
+        if(e.key === 'Enter' || e.key === ' ') { e.preventDefault(); elegirOpcion(i, li); }
+        });
+        listaOpciones.appendChild(li);
+    });
+}
+
+//necesitamos una funcion para seleccionar la opcion que queraos
+function elegirOpcion(i,liElem){
+    if(bloqueado)return;
+    //se muestra como seleccionada la que elegimos
+    [...listaOpciones.children].forEach(li => li.classList.remove('selected'));
+    liElem.classList.add('selected');
+    opcionSeleccionada = i;
+    document.getElementById('btn-verificar') = false;
 }
 
 //Funcion para verificar la respuesta
 function verificar() {
+    if(bloqueado)return;
     const pregunta = preguntasSeleccionadas[indexPregunta];
+    if(opcionSeleccionada === null) return; // no seleccionar
+
+    bloqueado = true; // bloquear hasta siguiente
+    const liElems = [...listaOpciones.children];
+
+    // marcar correcto y, si aplica, incorrecto
+    liElems.forEach((li, i) => {
+        li.classList.remove('selected','correct','wrong');
+        li.style.pointerEvents = 'none';
+        if(i === pregunta.correcta) li.classList.add('correct');
+        if(i === opcionSeleccionada && opcionSeleccionada !== pregunta.correcta) li.classList.add('wrong');
+    });
 
     if(opcionSelec === pregunta.correcta){
         puntaje += 10;
@@ -159,12 +200,25 @@ function verificar() {
     actualizarPuntaje();
     actualizarBarraProgreso();
 
-    indexPregunta++;
-  setTimeout(() => {
-    if(indexPregunta < preguntasSeleccionadas.length){
+    // Si ya se alcanzaron 8 respuestas correctas -> terminar nivel
+  if(respuestasCorrectas >= 8){
+    setTimeout(() => {
+      mostrarMensajeFinal(true);
+    }, 900);
+    return;
+  }
+
+    // mostrar boton siguiente o avanzar automaticamente
+  document.getElementById("btn-verificar").style.display = 'none';
+  document.getElementById("btn-siguiente").style.display = 'inline-block';
+  // auto-advance después de 1.2s
+  setTimeout(()=> {
+    if(indexPregunta < preguntasSeleccionadas.length - 1){
+      indexPregunta++;
       mostrarPregunta();
     } else {
-      alert("🎉 Nivel completado. Puntaje final: " + puntaje);
+      // si se acabaron las preguntas aunque no tengas 8 correctas:
+      setTimeout(()=> mostrarMensajeFinal(false), 400);
     }
   }, 1200);
 }
@@ -182,12 +236,20 @@ function actualizarPuntaje(){
 }
 
 function actualizarBarraProgreso(){
-    const totalPreguntas = preguntasSeleccionadas.length;
+    const totalPreguntas = preguntasSeleccionadas.length || 1;
     const porcentaje = Math.round((respuestasCorrectas / totalPreguntas)* 100);
     document.getElementById("barra-progreso").style.width = porcentaje + "%";
     document.getElementById("porcentaje").textContent = porcentaje + "%";
 }
 
-
+function mostrarMensajeFinal(ganoPor8Correctas){
+  if(ganoPor8Correctas){
+    alert("¡Felicidades! Nivel completado. Puntaje final: " + puntaje);
+  } else {
+    alert("Nivel terminado. Puntaje final: " + puntaje + ". Respuestas correctas: " + respuestasCorrectas);
+  }
+  // Reiniciar vista (puedes ajustar para ir a siguiente módulo)
+  window.location.reload();
+}
 
 
